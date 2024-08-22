@@ -82,7 +82,7 @@ const LogOutMember = () => {
       />
       <Button
         title="LogOut"
-        onPress={() => navigation.navigate('WelcomeScreen')}
+        onPress={() => navigation.navigate('LogInMember')}
         // backgroundColor={multiThemeColor().textcolor}
         backgroundColor="black"
         TextColor={multiThemeColor().main_background}
