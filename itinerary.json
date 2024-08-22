@@ -1,0 +1,39 @@
+{
+  "travel_mode": "Driving",
+  "start_address": "N/A",
+  "end_address": "N/A",
+  "total_distance": "52.0 km",
+  "total_duration": "59 min",
+  "stops": [
+    {
+      "name": "Indian Flag Tower Bengaluru",
+      "address": "National Military Memorial Park, 2, Millers Rd, Vasanth Nagar, Bengaluru, Karnataka 560051, India",
+      "rating": 5,
+      "types": "Tourist attraction"
+    },
+    {
+      "name": "The MadLabs: Where Fun Meets Science",
+      "address": "1st floor, Snow city, Jayamahal Main Rd, opposite TV Tower, J.C.Nagar, Bengaluru, Karnataka 560006, India",
+      "rating": 4.8,
+      "types": "Tourist attraction"
+    },
+    {
+      "name": "Shri Suryanaarayana Swamy Temple",
+      "address": "Krishna Reddy Colony, 139/26, HAL Old Airport Rd, Krishna Reddy Layout, Amarjyoti Layout, Domlur, Bengaluru, Karnataka 560071, India",
+      "rating": 4.8,
+      "types": "Tourist attraction"
+    },
+    {
+      "name": "Ancient Shri Someshwara Swamy Temple",
+      "address": "Halasuru, Someshwarpura, Bengaluru, Karnataka 560008, India",
+      "rating": 4.7,
+      "types": "Tourist attraction"
+    },
+    {
+      "name": "Maha Bodhi Society",
+      "address": "14, Kavi Kalidasa Road, Gandhi Nagar, Bengaluru, Karnataka 560009, India",
+      "rating": 4.7,
+      "types": "Tourist attraction"
+    }
+  ]
+}
