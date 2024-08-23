@@ -3,13 +3,9 @@ import os
 import json
 from zoneinfo import ZoneInfo
 from operator import itemgetter
-from serpapi import GoogleSearch
 from datetime import datetime, timedelta, timezone
 from groupManagement import get_group_members
 from databaseAPI import get_user_data, store_group_data, get_group_data
-
-# Set your SerpApi key as an environment variable
-os.environ["SERPAPI_API_KEY"] = "d8be108b46854add4fcddb16e3d168da47c031553bbbe82ac62a387c71333199"
 
 def load_model(path):
     """
@@ -73,111 +69,3 @@ def find_best_free_time(group_id, min_duration_minutes=60):
     suitable_slots = [slot for slot in free_slots if (slot['end'] - slot['start']) >= min_duration]
 
     return suitable_slots
-
-def get_group_preferences(group_id):
-    group_data = get_group_data(group_id)
-    preferences = {}
-    for member in group_data['members']:
-        user_data = get_user_data(member)
-        preferences[member] = user_data.get('preferences', {})
-    return preferences
-
-def get_optimal_route(start_location, end_location):
-    params = {
-        "engine": "google_maps_directions",
-        "start_addr": start_location,
-        "end_addr": end_location,
-        "api_key": os.getenv("SERPAPI_API_KEY")
-    }
-    search = GoogleSearch(params)
-    results = search.get_dict()
-    
-    if 'directions' not in results or not results['directions']:
-        raise ValueError(f"No route found between {start_location} and {end_location}")
-    
-    return results['directions'][0]
-
-def matches_preferences(place, group_preferences):
-    # Implement logic to check if the place matches group preferences
-    # This could involve checking place types, ratings, etc.
-    return True  # Placeholder
-
-def find_points_of_interest(route, max_stops=5):
-    points_of_interest = []
-    if 'trips' in route:
-        midpoint = len(route['trips']) // 2
-        lat, lng = route['trips'][midpoint]['details'][0]['gps_coordinates'].values()
-        params = {
-            "engine": "google_maps",
-            "q": "tourist attractions",
-            "ll": f"@{lat},{lng},14z",
-            "type": "search",
-            "api_key": os.getenv("SERPAPI_API_KEY")
-        }
-        search = GoogleSearch(params)
-        results = search.get_dict()
-        if 'local_results' in results:
-            points_of_interest = sorted(results['local_results'], key=itemgetter('rating'), reverse=True)[:max_stops]
-    return points_of_interest
-
-def create_travel_itinerary(route, points_of_interest):
-    itinerary = {
-        'travel_mode': route['travel_mode'],
-        'start_address': route.get('start_address', 'N/A'),
-        'end_address': route.get('end_address', 'N/A'),
-        'total_distance': route['formatted_distance'],
-        'total_duration': route['formatted_duration'],
-        'stops': []
-    }
-    
-    for poi in points_of_interest:
-        itinerary['stops'].append({
-            'name': poi['title'],
-            'address': poi.get('address', 'N/A'),
-            'rating': poi.get('rating', 'N/A'),
-            'types': poi.get('type', 'N/A')
-        })
-    
-    return itinerary
-
-def plan_intelligent_travel(group_id, start_location, end_location):
-    group_preferences = get_group_preferences(group_id)
-    route = get_optimal_route(start_location, end_location)
-    points_of_interest = find_points_of_interest(route, group_preferences)
-    return create_travel_itinerary(route, points_of_interest)
-
-def plan_intelligent_travel_debug(locations):
-    try:
-        route = get_optimal_route(locations[0], locations[-1])
-        points_of_interest = find_points_of_interest(route)
-        itinerary = create_travel_itinerary(route, points_of_interest)
-        save_itinerary(itinerary)
-        return itinerary
-    except ValueError as e:
-        print(f"Error: {str(e)}")
-        return None
-
-
-def save_itinerary(itinerary):
-    with open('itinerary.json', 'w') as f:
-        json.dump(itinerary, f, indent=2)
-    print("Itinerary saved to itinerary.json")
-
-def display_itinerary(itinerary):
-    if not itinerary:
-        print("No itinerary available.")
-        return
-
-    print("Travel Itinerary:")
-    print(f"Travel Mode: {itinerary['travel_mode']}")
-    print(f"Start: {itinerary['start_address']}")
-    print(f"End: {itinerary['end_address']}")
-    print(f"Total Distance: {itinerary['total_distance']}")
-    print(f"Total Duration: {itinerary['total_duration']}")
-    print("\nStops:")
-    for i, stop in enumerate(itinerary['stops'], 1):
-        print(f"{i}. {stop['name']}")
-        print(f"   Address: {stop['address']}")
-        print(f"   Rating: {stop['rating']}")
-        print(f"   Types: {stop['types']}")
-        print()
