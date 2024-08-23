@@ -1,37 +1,37 @@
 {
-  "travel_mode": "Driving",
+  "travel_mode": "Two-wheeler",
   "start_address": "N/A",
   "end_address": "N/A",
-  "total_distance": "52.0 km",
-  "total_duration": "59 min",
+  "total_distance": "63.0 km",
+  "total_duration": "1 hr 29 min",
   "stops": [
     {
-      "name": "Indian Flag Tower Bengaluru",
-      "address": "National Military Memorial Park, 2, Millers Rd, Vasanth Nagar, Bengaluru, Karnataka 560051, India",
+      "name": "Night Adventure Tourism",
+      "address": "No 52, 3rd main, 2nd cross, kottigepalya, Dr Puneeth Rajkumar Rd, Naagarabhaavi, Bengaluru, Karnataka 560091, India",
       "rating": 5,
-      "types": "Tourist attraction"
+      "types": "Tour operator"
     },
     {
-      "name": "The MadLabs: Where Fun Meets Science",
-      "address": "1st floor, Snow city, Jayamahal Main Rd, opposite TV Tower, J.C.Nagar, Bengaluru, Karnataka 560006, India",
+      "name": "Sri Rajarajeshwari Temple",
+      "address": "WGG6+R7F, Rajarajeshwari Temple Rd, Kenchenhalli, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098, India",
       "rating": 4.8,
       "types": "Tourist attraction"
     },
     {
-      "name": "Shri Suryanaarayana Swamy Temple",
-      "address": "Krishna Reddy Colony, 139/26, HAL Old Airport Rd, Krishna Reddy Layout, Amarjyoti Layout, Domlur, Bengaluru, Karnataka 560071, India",
-      "rating": 4.8,
-      "types": "Tourist attraction"
-    },
-    {
-      "name": "Ancient Shri Someshwara Swamy Temple",
-      "address": "Halasuru, Someshwarpura, Bengaluru, Karnataka 560008, India",
+      "name": "Shri Gavi Gangadhareshwara Swamy Temple",
+      "address": "WHX7+754, 5th Main Rd, Gavipuram Extention, Kempegowda Nagar, Bengaluru, Karnataka 560019, India",
       "rating": 4.7,
       "types": "Tourist attraction"
     },
     {
-      "name": "Maha Bodhi Society",
-      "address": "14, Kavi Kalidasa Road, Gandhi Nagar, Bengaluru, Karnataka 560009, India",
+      "name": "Shrungagiri Sri Shanmukha Swami Gudi",
+      "address": "BEML, Kempegowda Rd, 5th Stage, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098, India",
+      "rating": 4.7,
+      "types": "Tourist attraction"
+    },
+    {
+      "name": "Shri Ramanjaneya Gudda Temple",
+      "address": "WHV7+R8R, 5th Main Rd, Srinivasanagara, Hanumanthnagar, Banashankari 1st Stage, Banashankari, Bengaluru, Karnataka 560019, India",
       "rating": 4.7,
       "types": "Tourist attraction"
     }

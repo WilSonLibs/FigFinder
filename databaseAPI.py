@@ -28,7 +28,10 @@ def update_user_data(user, data):
     """
     Update calendar data for the specified user in the database.
     """
-    pass  # Add code to update user data
+    # Assuming data is a dictionary and you want to update specific fields
+    existing_data = get_user_data(user)
+    existing_data.update(data)  # Update with new data
+    store_user_data(user, existing_data)  # Store the updated data
 
 def get_user_data(user):
     """

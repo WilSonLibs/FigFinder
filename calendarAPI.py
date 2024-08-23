@@ -1,4 +1,3 @@
-# calendarAPI.py
 import datetime
 import os.path
 from google.auth.transport.requests import Request
@@ -7,6 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from groupManagement import get_group_members
+
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 def configure(credentials_file):
@@ -22,7 +22,6 @@ def configure(credentials_file):
         with open("token.json", "w") as token:
             token.write(creds.to_json())
     return creds
-
 
 def get_google_data(user, creds):
     try:
@@ -41,25 +40,15 @@ def get_google_data(user, creds):
         print(f"An error occurred: {error}")
         return []
 
-
 def get_outlook_data(user):
-    """
-    Fetch calendar data from Outlook Calendar for the specified user.
-    """
-    return []  # Replace with code to fetch Outlook Calendar data
+    # TODO: Implement Outlook calendar data retrieval
+    print(f"Outlook calendar data retrieval not implemented for user: {user}")
+    return []
 
 def get_apple_data(user):
-    """
-    Fetch calendar data from Apple Calendar for the specified user.
-    """
-    return []  # Replace with code to fetch Apple Calendar data
-
-def sync_calendars(user):
-    calendar_providers = ['Google', 'Outlook', 'Apple']
-    for provider in calendar_providers:
-        calendar_data = fetch_calendar_data(user, provider)
-        store_calendar_data(user, calendar_data)
-    print(f"Calendars synchronized for {user}")
+    # TODO: Implement Apple calendar data retrieval
+    print(f"Apple calendar data retrieval not implemented for user: {user}")
+    return []
 
 def fetch_calendar_data(user, provider, creds=None):
     if provider == 'Google':
@@ -68,9 +57,9 @@ def fetch_calendar_data(user, provider, creds=None):
         return get_outlook_data(user)
     elif provider == 'Apple':
         return get_apple_data(user)
-
-def store_calendar_data(user, data):
-    print(f"Data stored for {user}")
+    else:
+        print(f"Unsupported calendar provider: {provider}")
+        return []
 
 def fetch_group_calendar_data(group_id, provider, creds=None):
     group_members = get_group_members(group_id)
