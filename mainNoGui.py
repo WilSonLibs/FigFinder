@@ -2,7 +2,7 @@
 
 from calendarAPI import configure, fetch_calendar_data, fetch_group_calendar_data
 from databaseAPI import store_user_data, get_user_data, store_group_data, get_group_data
-from aiScheduler import find_best_free_time
+from aiScheduler import find_best_free_time, plan_intelligent_travel_debug, display_itinerary
 from groupManagement import create_group, join_group, generate_invitation_code, get_group_members
 
 def main():
@@ -16,9 +16,10 @@ def main():
         print("2. Create a new group")
         print("3. Join an existing group")
         print("4. Find best free time for a group")
-        print("5. Exit")
+        print("5. Test Intelligent Travel Planning")
+        print("6. Exit")
         
-        choice = input("Enter your choice (1-5): ")
+        choice = input("Enter your choice (1-6): ")
         
         if choice == '1':
             # Sync user's calendar
@@ -54,6 +55,12 @@ def main():
                 print(f"Free slot: {slot['start']} to {slot['end']}")
         
         elif choice == '5':
+            # Test Intelligent Travel Planning
+            locations = input("Enter locations (comma-separated): ").split(',')
+            itinerary = plan_intelligent_travel_debug(locations)
+            display_itinerary(itinerary)
+        
+        elif choice == '6':
             # Exit the program
             print("Thank you for using FigFinder. Goodbye!")
             break
