@@ -1,8 +1,6 @@
 # databaseAPI.py
 import json
 import os
-from collections import Counter
-
 def connect(db_url):
     """
     Connect to the database using the provided database URL.
@@ -74,25 +72,3 @@ def send_notifications():
     Send notifications to users about upcoming events.
     """
     pass  # Replace with code to send notifications
-
-def save_popular_keywords(keywords):
-    try:
-        with open("popular_keywords.json", "r") as file:
-            existing_keywords = json.load(file)
-    except FileNotFoundError:
-        existing_keywords = []
-
-    existing_keywords.extend(keywords)
-    
-    with open("popular_keywords.json", "w") as file:
-        json.dump(existing_keywords, file)
-
-def get_popular_keywords(limit=20):
-    try:
-        with open("popular_keywords.json", "r") as file:
-            all_keywords = json.load(file)
-    except FileNotFoundError:
-        return []
-
-    keyword_counts = Counter(all_keywords)
-    return [keyword for keyword, _ in keyword_counts.most_common(limit)]

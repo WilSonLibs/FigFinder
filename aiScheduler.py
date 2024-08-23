@@ -20,7 +20,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from groupManagement import get_group_members
 from dotenv import load_dotenv
-from databaseAPI import save_popular_keywords
 load_dotenv()
 
 # Set your SerpApi key as an environment variable
@@ -37,27 +36,6 @@ llm = Together(
 
 def load_model(path):
     pass
-
-def generate_travel_keywords(user_input, group_id, llm):
-    group_data = get_group_data(group_id)
-    group_preferences = get_group_preferences(group_id)
-    
-    prompt = f"Generate 10 travel destination keywords based on the following input: '{user_input}'. "
-    prompt += f"Consider these group preferences: {group_preferences}. "
-    prompt += "Provide a diverse range of options."
-
-    response = llm.invoke(prompt)
-    keywords = response.strip().split('\n')
-    
-    save_popular_keywords(keywords)
-    return keywords
-
-def expand_travel_idea(keyword, llm):
-    prompt = f"Provide more information about '{keyword}' as a travel destination. "
-    prompt += "Include key attractions, best time to visit, and any unique experiences."
-
-    response = llm.invoke(prompt)
-    return response.strip()
 
 def generate_trip_summary(group_id, itinerary, llm):
     """
