@@ -7,98 +7,15 @@ from serpapi import GoogleSearch
 from datetime import datetime, timedelta, timezone
 from groupManagement import get_group_members
 from databaseAPI import get_user_data, store_group_data, get_group_data
-import requests
-from langchain.llms import Together
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-import datetime
-import os.path
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from groupManagement import get_group_members
-from dotenv import load_dotenv
-load_dotenv()
 
 # Set your SerpApi key as an environment variable
-serpapi_key = os.getenv("SERPAPI_API_KEY")
-together_api_key = os.getenv("TOGETHER_API_KEY")
-
-# Initialize Together AI
-llm = Together(
-    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-    temperature=0.7,
-    max_tokens=1024,
-    together_api_key=together_api_key
-)
+os.environ["SERPAPI_API_KEY"] = "d8be108b46854add4fcddb16e3d168da47c031553bbbe82ac62a387c71333199"
 
 def load_model(path):
-    pass
-
-def generate_trip_summary(group_id, itinerary, llm):
     """
-    Generates a summary of the trip using Langchain and Together AI's text generation API.
+    Load AI model from the specified path.
     """
-    group_data = get_group_data(group_id)
-    group_name = group_data.get('name', 'Your Group')
-    travel_dates = group_data.get('travel_dates', 'Sometime soon')
-
-    # Template for trip summary
-    template = """
-    You are a helpful and friendly AI assistant, planning a trip itinerary.
-    Generate a fun and engaging trip summary for {group_name}, who are traveling {travel_dates}.
-    The itinerary includes stops at these key locations: {locations}.
-    Make sure to highlight the most exciting aspects of the trip and keep the summary concise. 
-    """
-
-    # Create the prompt
-    prompt = PromptTemplate(
-        input_variables=["group_name", "travel_dates", "locations"],
-        template=template,
-    )
-
-    # Create the Langchain chain
-    chain = LLMChain(llm=llm, prompt=prompt)
-
-    # Run the chain with the input data
-    summary = chain.run({
-        "group_name": group_name,
-        "travel_dates": travel_dates,
-        "locations": ', '.join([stop['name'] for stop in itinerary['stops']])
-    })
-
-    return summary
-
-
-def suggest_activities(location, interests):
-    """
-    Suggests activities based on location and user interests using Together AI.
-    """
-    prompt = f"Suggest some activities in {location} that would be suitable for a group of friends"
-    if interests:
-        prompt += f" who are interested in {', '.join(interests)}."
-    else:
-        prompt += "."
-
-    # Call Together AI API to get activity suggestions using llm.invoke()
-    response = llm.invoke(prompt)
-    suggestions = response # Assuming the response is the suggestions
-
-    return suggestions
-
-def get_travel_advice(destination, trip_duration):
-    """
-    Provides travel advice based on the destination and trip duration.
-    """
-    prompt = f"Provide some travel advice for a trip to {destination} lasting {trip_duration} days."
-    prompt += "Include tips on things like packing, local customs, and must-see attractions."
-
-    # Call Together AI API to get travel advice using llm.invoke()
-    advice = llm.invoke(prompt)
-
-    return advice
+    pass  # Load and return the AI model
 
 def predict_optimal_slots(model, data):
     """

@@ -1,1 +1,0 @@
-from ibm_watson import AssistantV2
