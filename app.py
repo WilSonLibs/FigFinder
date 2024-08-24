@@ -6,7 +6,76 @@ from datetime import datetime
 from flask import abort
 from flask_cors import CORS
 from group_utils import Group
-import openai, json
+import openai, json, requests
+from pydantic import BaseModel, Field
+from typing import List
+from langchain.output_parsers import PydanticOutputParser
+from langchain.prompts import PromptTemplate
+from langchain.llms import OpenAI
+from datetime import timedelta
+from serpapi import GoogleSearch
+from flask import Flask, request, jsonify, render_template
+from calendar_utils import authenticate_google_calendar, get_upcoming_events, create_group_calendar, add_event_to_calendar, clear_calendar, get_calendar_events
+from group_utils import Group, User
+from googleapiclient.discovery import build
+from datetime import datetime, timedelta
+from flask import abort
+from flask_cors import CORS
+from group_utils import Group
+import openai, json, requests
+from pydantic import BaseModel, Field
+from typing import List, Optional
+from langchain.output_parsers import PydanticOutputParser
+from langchain.prompts import PromptTemplate
+from langchain.llms import OpenAI
+from serpapi import GoogleSearch
+
+class Location(BaseModel):
+    name: str = Field(description="Name of the location")
+    place_id: str = Field(description="Unique identifier for the place")
+    rating: Optional[float] = Field(description="Average rating of the location")
+    reviews: Optional[int] = Field(description="Number of reviews for the location")
+    price: Optional[str] = Field(description="Price level indicator (e.g., $, $$, $$$)")
+    type: str = Field(description="Primary type or category of the location")
+    address: str = Field(description="Full address of the location")
+    open_state: Optional[str] = Field(description="Current open/closed status of the location")
+    phone: Optional[str] = Field(description="Contact phone number for the location")
+    website: Optional[str] = Field(description="Official website URL of the location")
+    description: Optional[str] = Field(description="Brief description or overview of the location")
+
+class TravelPlan(BaseModel):
+    locations: List[Location] = Field(description="List of locations included in the travel plan")
+    itinerary: List[str] = Field(description="Day-by-day itinerary for the travel plan")
+
+class Suggestions(BaseModel):
+    travel_plan: TravelPlan = Field(description="Comprehensive travel plan including locations and itinerary")
+
+parser = PydanticOutputParser(pydantic_object=Suggestions)
+
+OPENWEATHER_API_KEY = "be2b26c47fb0359ee0369eb2d7f84067"
+SERPAPI_API_KEY = "d8be108b46854add4fcddb16e3d168da47c031553bbbe82ac62a387c71333199"
+
+# def extract_locations(ai_output):
+#     prompt = f"Extract the city names and brief descriptions from this text: {ai_output}. Format the output as a JSON list of objects with 'name' field."
+    
+#     client = openai.OpenAI(
+#         api_key="d546f9f2469f46799b08a638d01fbd98",
+#         base_url="https://api.aimlapi.com/",
+#     )
+
+#     chat_completion = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant that extracts location information."},
+#             {"role": "user", "content": prompt},
+#         ],
+#         temperature=0.3,
+#         max_tokens=200,
+#     )
+
+#     locations_json = chat_completion.choices[0].message.content
+#     parsed_locations = Locations.parse_raw(locations_json)
+#     return parsed_locations.locations
 
 def verify_group_exists(group_id):
     try:
@@ -64,42 +133,82 @@ def analyze_availability():
         }
     })
 
+parser = PydanticOutputParser(pydantic_object=Suggestions)
+
+def get_lat_lon(city_name):
+    geocoding_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={OPENWEATHER_API_KEY}"
+    response = requests.get(geocoding_url)
+    data = response.json()
+    if data:
+        return data[0]['lat'], data[0]['lon']
+    return None, None
+
 @app.route('/api/schedule/suggest', methods=['POST'])
 def generate_suggestions():
     data = request.json
     group_id = data.get('groupId')
     preferences = data.get('preferences')
-    # Fetch group data
+    location = data.get('location', 'New York, NY')
+
     with open('groups_database.json', 'r') as f:
         groups_data = json.load(f)
+
     group_info = groups_data.get(group_id)
     if not group_info:
         return jsonify({"error": "Group not found"}), 404
 
-    # Construct the prompt for the AI
-    system_content = "You are an AI assistant that generates travel schedule suggestions based on group preferences."
-    user_content = f"Generate travel schedule suggestions for group '{group_info['name']}' with travel dates {group_info['travel_dates']} and the following preferences: {preferences}"
+    start_date = datetime.fromisoformat(group_info['travel_dates'][0])
+    end_date = datetime.fromisoformat(group_info['travel_dates'][1])
+
+    # SerpAPI Google Maps search
+    params = {
+        "engine": "google_maps",
+        "q": preferences,
+        "ll": "@40.7455096,-74.0083012,14z",  # Example coordinates for New York
+        "type": "search",
+        "api_key": SERPAPI_API_KEY
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
+    local_results = results.get("local_results", [])
+
+    locations = [Location(**result) for result in local_results]
+
+    # Generate itinerary using AI
+    location_descriptions = "\n".join([f"{loc.name}: {loc.description}" for loc in locations])
+    prompt = PromptTemplate(
+        template="Generate a detailed travel itinerary for a group trip from {start_date} to {end_date} based on these preferences: {preferences}. Consider the following places:\n{locations}\nProvide a day-by-day itinerary.",
+        input_variables=["start_date", "end_date", "preferences", "locations"]
+    )
 
     client = openai.OpenAI(
         api_key="d546f9f2469f46799b08a638d01fbd98",
         base_url="https://api.aimlapi.com/",
     )
-    
+
     chat_completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": system_content},
-            {"role": "user", "content": user_content},
+            {"role": "system", "content": "You are a travel planner creating detailed itineraries."},
+            {"role": "user", "content": prompt.format(
+                start_date=start_date.strftime('%Y-%m-%d'),
+                end_date=end_date.strftime('%Y-%m-%d'),
+                preferences=preferences,
+                locations=location_descriptions
+            )},
         ],
         temperature=0.7,
         max_tokens=512,
     )
-    
-    suggestions = chat_completion.choices[0].message.content
-    
-    return jsonify({
-        "suggestions": suggestions
-    })
+
+    itinerary = chat_completion.choices[0].message.content.split('\n')
+
+    travel_plan = TravelPlan(locations=locations, itinerary=itinerary)
+    suggestions = Suggestions(travel_plan=travel_plan)
+
+    return jsonify(suggestions.dict())
+
 
 
 @app.route('/api/connect-calendar', methods=['POST'])

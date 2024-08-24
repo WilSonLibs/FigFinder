@@ -20,5 +20,14 @@
     "members": [
       "unnath2"
     ]
+  },
+  "8912c4c85b7336bd2427cade48c317e39d1844a77d09afba8f44abef8b20dcb5@group.calendar.google.com": {
+    "name": "group_testing",
+    "description": "hello",
+    "travel_dates": [
+      "2024-08-24T00:00:00+00:00",
+      "2024-08-29T00:00:00+00:00"
+    ],
+    "members": []
   }
 }
