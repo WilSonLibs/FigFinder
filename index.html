@@ -58,6 +58,26 @@
             <button onclick="checkCalendarAvailability()">Check Availability</button>
             <div id="checkAvailabilityResult" class="result"></div>
         </div>
+
+        <div class="endpoint">
+            <h2>Analyze Availability</h2>
+            <input type="text" id="analyzeGroupId" placeholder="Group ID">
+            <input type="text" id="analyzePreference1" placeholder="Preference 1">
+            <input type="text" id="analyzePreference2" placeholder="Preference 2">
+            <input type="text" id="analyzePreference3" placeholder="Preference 3">
+            <button onclick="analyzeAvailability()">Analyze</button>
+            <div id="analyzeResult" class="result"></div>
+        </div>
+        
+        <div class="endpoint">
+            <h2>Generate Suggestions</h2>
+            <input type="text" id="suggestGroupId" placeholder="Group ID">
+            <input type="text" id="suggestPreference1" placeholder="Preference 1">
+            <input type="text" id="suggestPreference2" placeholder="Preference 2">
+            <input type="text" id="suggestPreference3" placeholder="Preference 3">
+            <button onclick="generateSuggestions()">Generate</button>
+            <div id="suggestResult" class="result"></div>
+        </div>
         
     </div>
 

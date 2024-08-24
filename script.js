@@ -65,3 +65,32 @@ async function checkCalendarAvailability() {
     const result = await makeRequest(`${BASE_URL}/api/calendar/availability?groupId=${groupId}&dateRange=${startDate}/${endDate}`, 'GET');
     document.getElementById('checkAvailabilityResult').innerText = JSON.stringify(result, null, 2);
 }
+
+async function analyzeAvailability() {
+    const groupId = document.getElementById('analyzeGroupId').value;
+    const preferences = {
+        preference1: document.getElementById('analyzePreference1').value,
+        preference2: document.getElementById('analyzePreference2').value,
+        preference3: document.getElementById('analyzePreference3').value
+    };
+    const result = await makeRequest(`${BASE_URL}/api/schedule/analyze`, 'POST', {
+        groupId: groupId,
+        preferences: preferences
+    });
+    document.getElementById('analyzeResult').innerText = JSON.stringify(result, null, 2);
+}
+
+async function generateSuggestions() {
+    const groupId = document.getElementById('suggestGroupId').value;
+    const preferences = {
+        preference1: document.getElementById('suggestPreference1').value,
+        preference2: document.getElementById('suggestPreference2').value,
+        preference3: document.getElementById('suggestPreference3').value
+    };
+    const result = await makeRequest(`${BASE_URL}/api/schedule/suggest`, 'POST', {
+        groupId: groupId,
+        preferences: preferences
+    });
+    document.getElementById('suggestResult').innerText = JSON.stringify(result, null, 2);
+}
+

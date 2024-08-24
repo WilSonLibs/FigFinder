@@ -6,6 +6,7 @@ from datetime import datetime
 from flask import abort
 from flask_cors import CORS
 from group_utils import Group
+import openai, json
 
 def verify_group_exists(group_id):
     try:
@@ -17,6 +18,84 @@ def verify_group_exists(group_id):
 
 app = Flask(__name__)
 CORS(app)  # This enables CORS for all routes
+
+@app.route('/api/schedule/analyze', methods=['POST'])
+def analyze_availability():
+    data = request.json
+    with open('groups_database.json', 'r') as f:
+        groups_data = json.load(f)
+    group_id = data.get('groupId')
+    preferences = data.get('preferences')
+
+    # Fetch group data
+    group_info = groups_data.get(group_id)
+    if not group_info:
+        return jsonify({"error": "Group not found"}), 404
+
+    # Construct the prompt for the AI
+    system_content = "You are an AI assistant that analyzes group availability and preferences for travel planning."
+    user_content = f"Analyze the availability for group '{group_info['name']}' with travel dates {group_info['travel_dates']} and the following preferences: {preferences}"
+
+
+    client = openai.OpenAI(
+        api_key="d546f9f2469f46799b08a638d01fbd98",
+        base_url="https://api.aimlapi.com/",
+    )
+    
+    chat_completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_content},
+        ],
+        temperature=0.7,
+        max_tokens=512,
+    )
+    
+    analysis = chat_completion.choices[0].message.content
+    
+    return jsonify({
+        "analysis": {
+            "optimalSlots": analysis
+        }
+    })
+
+@app.route('/api/schedule/suggest', methods=['POST'])
+def generate_suggestions():
+    data = request.json
+    group_id = data.get('groupId')
+    preferences = data.get('preferences')
+    # Fetch group data
+    with open('groups_database.json', 'r') as f:
+        groups_data = json.load(f)
+    group_info = groups_data.get(group_id)
+    if not group_info:
+        return jsonify({"error": "Group not found"}), 404
+
+    # Construct the prompt for the AI
+    system_content = "You are an AI assistant that generates travel schedule suggestions based on group preferences."
+    user_content = f"Generate travel schedule suggestions for group '{group_info['name']}' with travel dates {group_info['travel_dates']} and the following preferences: {preferences}"
+
+    client = openai.OpenAI(
+        api_key="d546f9f2469f46799b08a638d01fbd98",
+        base_url="https://api.aimlapi.com/",
+    )
+    
+    chat_completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_content},
+        ],
+        temperature=0.7,
+        max_tokens=512,
+    )
+    
+    suggestions = chat_completion.choices[0].message.content
+    
+    return jsonify({
+        "suggestions": suggestions
+    })
 
 
 @app.route('/api/connect-calendar', methods=['POST'])
