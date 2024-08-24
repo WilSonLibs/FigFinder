@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = '';
 
 async function makeRequest(url, method, body = null) {
     const options = {

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from calendar_utils import authenticate_google_calendar, get_upcoming_events, create_group_calendar, add_event_to_calendar, clear_calendar, get_calendar_events
 from group_utils import Group, User
 from googleapiclient.discovery import build
@@ -18,6 +18,10 @@ def verify_group_exists(group_id):
 
 app = Flask(__name__)
 CORS(app)  # This enables CORS for all routes
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/api/schedule/analyze', methods=['POST'])
 def analyze_availability():
