@@ -102,7 +102,7 @@ def analyze_availability():
     )
     
     chat_completion = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="mistralai/Mistral-7B-Instruct-v0.2",
         messages=[
             {"role": "system", "content": system_content},
             {"role": "user", "content": user_content},
@@ -174,7 +174,7 @@ def generate_suggestions():
     )
 
     chat_completion = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="mistralai/Mistral-7B-Instruct-v0.2",
         messages=[
             {"role": "system", "content": "You are a travel planner creating detailed itineraries."},
             {"role": "user", "content": prompt.format(
