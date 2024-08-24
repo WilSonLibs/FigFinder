@@ -14,21 +14,7 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from datetime import timedelta
 from serpapi import GoogleSearch
-from flask import Flask, request, jsonify, render_template
-from calendar_utils import authenticate_google_calendar, get_upcoming_events, create_group_calendar, add_event_to_calendar, clear_calendar, get_calendar_events
-from group_utils import Group, User
-from googleapiclient.discovery import build
-from datetime import datetime, timedelta
-from flask import abort
-from flask_cors import CORS
-from group_utils import Group
-import openai, json, requests
-from pydantic import BaseModel, Field
 from typing import List, Optional
-from langchain.output_parsers import PydanticOutputParser
-from langchain.prompts import PromptTemplate
-from langchain.llms import OpenAI
-from serpapi import GoogleSearch
 
 class Location(BaseModel):
     name: str = Field(description="Name of the location")
