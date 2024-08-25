@@ -77,7 +77,7 @@ CORS(app)  # This enables CORS for all routes
 @app.route('/')
 def index():
     return render_template('index.html')
-
+    
 @app.route('/api/schedule/analyze', methods=['POST'])
 def analyze_availability():
     data = request.json
@@ -199,11 +199,14 @@ def generate_suggestions():
 
 @app.route('/api/connect-calendar', methods=['POST'])
 def connect_calendar():
-    creds = authenticate_google_calendar()
-    if creds:
-        return jsonify({"message": "Calendar connected successfully."}), 200
-    else:
-        return jsonify({"error": "Failed to connect calendar."}), 400
+    try:
+        creds = authenticate_google_calendar()
+        if creds:
+            return jsonify({"message": "Calendar connected successfully."}), 200
+        else:
+            return jsonify({"error": "Failed to connect calendar."}), 400
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @app.route('/api/calendar/providers', methods=['GET'])
 def get_calendar_providers():
