@@ -1,2 +1,0 @@
-# FigFinder
-Travellers scheduler planner
