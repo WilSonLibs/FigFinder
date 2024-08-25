@@ -94,6 +94,13 @@ def clear_calendar(service, calendar_id):
     except HttpError as error:
         print(f'An error occurred: {error}')
 
+       
+def get_user_calendar_events():
+    creds = authenticate_google_calendar()
+    service = build('calendar', 'v3', credentials=creds)
+    return get_upcoming_events(service)
+
+
 
 if __name__ == '__main__':
     events = get_upcoming_events()
